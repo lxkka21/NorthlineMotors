@@ -1,15 +1,31 @@
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import { createAuthRouter } from './auth/router.js';
+import { SupabaseUserRepository } from './auth/repository.js';
+import { authenticate, requireRole } from './auth/middleware.js';
 import { env } from './config/env.js';
+import { errorHandler } from './middleware/error-handler.js';
+import type { UserRepository } from './auth/types.js';
 
-export const app = express();
+export function createApp(options: { userRepository?: UserRepository } = {}) {
+  const app = express();
+  const userRepository = options.userRepository ?? new SupabaseUserRepository();
 
-app.use(helmet());
-app.use(cors({ origin: env.FRONTEND_ORIGIN }));
-app.use(express.json());
+  app.use(helmet());
+  app.use(cors({ origin: env.FRONTEND_ORIGIN }));
+  app.use(express.json());
 
-app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok', service: 'car-dealership-inventory-api' });
-});
+  app.get('/api/health', (_request, response) => {
+    response.json({ status: 'ok', service: 'car-dealership-inventory-api' });
+  });
+  app.use('/api/auth', createAuthRouter(userRepository));
+  app.get('/api/admin/ping', authenticate(userRepository), requireRole('admin'), (_request, response) => {
+    response.json({ status: 'ok' });
+  });
+  app.use(errorHandler);
 
+  return app;
+}
+
+export const app = createApp();

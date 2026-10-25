@@ -11,15 +11,18 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
+    "argon2": "^0.44.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "zod": "^4.1.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.5.2",
     "supertest": "^7.1.4",
     "tsx": "^4.20.5",
@@ -27,4 +30,3 @@
     "vitest": "^3.2.4"
   }
 }
-
