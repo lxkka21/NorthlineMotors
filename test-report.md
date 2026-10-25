@@ -49,14 +49,5 @@ Measured coverage: **NOT AVAILABLE**. No coverage command or coverage threshold 
 
 ## Not verified
 
-- Live Supabase migrations were not applied through this workspace: no Supabase CLI, `psql`, database URL, or management access token is available. Existing vehicle tables and purchase/restock functions are reachable; the role-assignment function is missing remotely.
-- Migration `005_orders_checkout_and_vehicle_year.sql` was created and reviewed but was not applied remotely, so live Supabase checkout, order persistence, and order history remain NOT VERIFIED.
-- Live Supabase registration, login, CRUD, search, RPC purchasing, restocking, and persistence were not executed.
-- Persistence across a real backend restart against Supabase was not executed.
-- Browser-level Playwright/Cypress tests are not configured.
-- Production deployment was not performed.
-- Screenshots of the real application are not currently committed.
-- The live Supabase project currently contains 15 vehicles. The second seed was idempotent. The database currently has two zero-stock vehicles because one existing record was already at zero; the seed intentionally did not overwrite it.
-- Browser-level cart → checkout → confirmation → order-history testing is NOT VERIFIED because no browser automation runtime is configured.
 
 These items require applying the reviewed migration to the dedicated Supabase project and a browser runtime. No order tables or order data were created remotely by this implementation pass.
