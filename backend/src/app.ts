@@ -7,8 +7,10 @@ import { authenticate, requireRole } from './auth/middleware.js';
 import { env } from './config/env.js';
 import { errorHandler } from './middleware/error-handler.js';
 import type { UserRepository } from './auth/types.js';
+import { createVehicleRouter } from './vehicles/router.js';
+import type { VehicleRepository } from './vehicles/types.js';
 
-export function createApp(options: { userRepository?: UserRepository } = {}) {
+export function createApp(options: { userRepository?: UserRepository; vehicleRepository?: VehicleRepository } = {}) {
   const app = express();
   const userRepository = options.userRepository ?? new SupabaseUserRepository();
 
@@ -23,6 +25,7 @@ export function createApp(options: { userRepository?: UserRepository } = {}) {
   app.get('/api/admin/ping', authenticate(userRepository), requireRole('admin'), (_request, response) => {
     response.json({ status: 'ok' });
   });
+  app.use('/api/vehicles', createVehicleRouter(userRepository, options.vehicleRepository));
   app.use(errorHandler);
 
   return app;
