@@ -9,6 +9,9 @@ import { errorHandler } from './middleware/error-handler.js';
 import type { UserRepository } from './auth/types.js';
 import { createVehicleRouter } from './vehicles/router.js';
 import type { VehicleRepository } from './vehicles/types.js';
+import { createInventoryRouter } from './inventory/router.js';
+import { SupabaseInventoryRepository } from './inventory/repository.js';
+import type { InventoryRepository } from './inventory/types.js';
 
 export function createApp(options: { userRepository?: UserRepository; vehicleRepository?: VehicleRepository } = {}) {
   const app = express();
@@ -26,6 +29,10 @@ export function createApp(options: { userRepository?: UserRepository; vehicleRep
     response.json({ status: 'ok' });
   });
   app.use('/api/vehicles', createVehicleRouter(userRepository, options.vehicleRepository));
+  const inventoryRepository: InventoryRepository = options.vehicleRepository && 'purchase' in options.vehicleRepository
+    ? options.vehicleRepository as VehicleRepository & InventoryRepository
+    : new SupabaseInventoryRepository();
+  app.use('/api/vehicles', createInventoryRouter(userRepository, inventoryRepository));
   app.use(errorHandler);
 
   return app;
