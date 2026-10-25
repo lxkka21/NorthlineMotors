@@ -1,5 +1,9 @@
 # Northline Motors
 
+> **Live demo:** [Open Northline Motors](https://frontend-three-xi-99caku33l8.vercel.app)
+> 
+> **Admin portal:** [Open administrator login](https://frontend-three-xi-99caku33l8.vercel.app/admin/login)
+
 Northline Motors is a full-stack car dealership inventory system. It provides a React single-page application backed by an Express REST API, with Supabase PostgreSQL persistence, custom application authentication, JWT authorization, vehicle search, purchasing, and administrator inventory controls.
 
 ## Submission deliverables
