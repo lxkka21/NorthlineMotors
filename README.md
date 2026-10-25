@@ -10,6 +10,8 @@ Northline Motors is a full-stack car dealership inventory system. It provides a 
 
 The frontend and API are deployed separately on Vercel. Supabase stores the persistent application data. For local development, follow the setup steps below.
 
+<!-- Add a real screenshot of the live homepage here when ready: ![Northline Motors homepage](docs/screenshots/homepage.png) -->
+
 ## Quick start
 
 ```powershell
@@ -125,6 +127,8 @@ Remove-Item Env:ADMIN_EMAIL,Env:ADMIN_PASSWORD,Env:ADMIN_PROVISION_CONFIRM
 The command refuses to run without the confirmation token and refuses to create an administrator if one already exists. Never put these values in source, the frontend, shell history, or documentation.
 
 Public registration is the safe way to create a normal User account. Sign out from the account menu before testing another role; each login reads the current role from the backend.
+
+<!-- Add a real screenshot of the admin dashboard here when ready: ![Admin dashboard](docs/screenshots/admin-dashboard.png) -->
 
 ## Running locally
 
@@ -366,7 +370,7 @@ The verified results at documentation time were:
 
 The detailed report is in [test-report.md](./test-report.md). Coverage was not measured because no coverage command was configured. Live Supabase vehicle seeding and API listing were verified; checkout/order persistence awaits migration 005, and browser E2E testing was not verified.
 
-## Screenshots
+<!-- Screenshot placeholders are kept near the relevant README content above. Add real, redacted images only. The old placeholder block below is intentionally hidden.
 
 Add screenshots of the real application here when ready. Do not add secrets, passwords, tokens, private user data, or database credentials to screenshots.
 
@@ -386,7 +390,7 @@ Add screenshots of the real application here when ready. Do not add secrets, pas
 
 <!-- Add a real screenshot here, for example: ![Admin dashboard](docs/screenshots/admin-dashboard.png) -->
 
-Vehicle card imagery uses fixed Unsplash image URLs selected by vehicle category for presentation only; vehicle identity, price, and stock always come from the API. The login showroom image is also from Unsplash. Capture and store genuine screenshots only after the database has been safely configured and seeded.
+-->
 
 Vehicle cards now link to authenticated detail routes at `/vehicles/:id`. The detail page loads the selected record through `GET /api/vehicles/:id`, shows only schema-backed fields, keeps unavailable stock disabled, and links related vehicles from the live catalog. Because the current schema does not store a media gallery or technical specifications, the page honestly presents one reliable photography fallback and labels unavailable specifications rather than inventing them. The shared footer contains the owner-provided contact links and editable default hours.
 
