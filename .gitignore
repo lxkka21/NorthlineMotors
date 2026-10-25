@@ -5,6 +5,8 @@ build/
 coverage/
 .vite/
 *.log
+.firebase/
+firebase-debug.log
 
 # Real environment files and local credentials
 .env
@@ -18,4 +20,3 @@ supa.env
 Thumbs.db
 .idea/
 .vscode/
-
