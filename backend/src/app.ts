@@ -18,10 +18,11 @@ import type { OrderRepository } from './orders/types.js';
 export function createApp(options: { userRepository?: UserRepository; vehicleRepository?: VehicleRepository; orderRepository?: OrderRepository } = {}) {
   const app = express();
   const userRepository = options.userRepository ?? new SupabaseUserRepository();
+  const allowedOrigins = env.FRONTEND_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean);
 
   const helmetMiddleware = helmet as unknown as () => import('express').RequestHandler;
   app.use(helmetMiddleware());
-  app.use(cors({ origin: env.FRONTEND_ORIGIN }));
+  app.use(cors({ origin: (origin, callback) => callback(null, !origin || allowedOrigins.includes(origin)) }));
   app.use(express.json());
 
   app.get('/api/health', (_request, response) => {
