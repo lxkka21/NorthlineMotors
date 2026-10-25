@@ -2,6 +2,18 @@
 
 Northline Motors is a full-stack car dealership inventory system. It provides a React single-page application backed by an Express REST API, with Supabase PostgreSQL persistence, custom application authentication, JWT authorization, vehicle search, purchasing, and administrator inventory controls.
 
+## Submission deliverables
+
+| Requirement | Link |
+|---|---|
+| Public repository | [GitHub: lxkka21/NorthlineMotors](https://github.com/lxkka21/NorthlineMotors) |
+| Project overview and local setup | [README setup instructions](#installation) |
+| Final application screenshots | [Screenshots folder](./Screenshots) and embedded examples below |
+| Test report | [test-report.md](./test-report.md) |
+| AI usage statement | [My AI Usage](#my-ai-usage) |
+| Raw AI logs / chat links | [PROMPTS.md](./PROMPTS.md) |
+| Optional live application | [Live Northline Motors site](https://frontend-three-xi-99caku33l8.vercel.app) |
+
 ## Live website
 
 | Resource | Link |
