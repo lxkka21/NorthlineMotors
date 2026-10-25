@@ -16,7 +16,7 @@ This report records the available verification evidence for the Car Dealership I
 | `npm run lint` | PASS | ESLint completed with no errors or warnings. |
 | `npm run lint:backend` | PASS | Backend lint completed successfully. |
 | `npm run lint:frontend` | PASS | Frontend lint completed successfully. |
-| `npm --workspace backend test` | PASS | 6 test files, 62 tests passed, including checkout, idempotency, ownership, rollback, concurrent final-unit order tests, detailed registration/profile persistence, and vehicle detail lookup. |
+| `npm --workspace backend test` | PASS | 6 test files, 61 tests passed, including checkout, idempotency, ownership, rollback, concurrent final-unit order tests, detailed registration/profile persistence, and vehicle detail lookup. |
 | `npm --workspace frontend test` | PASS | 8 test files, 20 tests passed, including detailed registration validation, admin-login role rejection, app-level detail routing, cart quantity/removal behavior, redesigned filters, card links, image fallback, and footer contact links. |
 | `npm run build` | PASS | Backend `tsc` passed; frontend `tsc -b` and Vite build passed. |
 | Local checkout/order API tests | PASS | Server-priced totals, stock limits, rollback, idempotency, ownership, admin visibility, and concurrent final-unit behavior are covered with an isolated repository test double. |
@@ -30,7 +30,7 @@ This report records the available verification evidence for the Car Dealership I
 | Second demo seed | PASS | 0 inserted, 15 left unchanged, 15 verified. |
 | Live Express vehicle listing | PASS | Authenticated request returned HTTP 200 with 15 vehicles, including Nissan Leaf SV Plus at zero stock. |
 
-Backend tests include authentication, vehicle API, inventory operations, validation, authorization, database-error handling, and concurrent final-unit purchase behavior through repository test doubles.
+Backend tests include authentication, vehicle API, inventory operations, validation, authorization, database-error handling, and concurrent final-unit purchase behavior through isolated repository test doubles.
 
 Frontend tests include authentication form behavior, vehicle filters, vehicle card behavior, disabled purchase behavior, loading/error behavior, and admin UI behavior using mocked API responses.
 
@@ -42,6 +42,21 @@ Registration tests cover profile persistence, email normalization, phone/passwor
 
 - Frontend Vitest runs emit Node’s experimental localStorage warning. Tests still pass.
 - Expected inventory database-error tests log the generic `Unhandled request error` message from the error handler while asserting the safe HTTP response.
+
+## TDD evidence
+
+The repository preserves meaningful test-first commits for the main backend milestones:
+
+| TDD stage | Commit evidence |
+|---|---|
+| Authentication tests written first | `b871b33 test: define authentication behavior` |
+| Authentication implementation | `8821000 feat: implement database-backed authentication` |
+| Vehicle tests written first | `f6657e5 test: define vehicle management behavior` |
+| Vehicle implementation | `469a0e6 feat: implement vehicle management API` |
+| Inventory tests written first | `465ac47 test: define inventory operations behavior` |
+| Inventory implementation | `c1339cd feat: add atomic inventory operations` |
+
+This demonstrates the Red → Green → Refactor sequence through repository history and passing regression tests. The original terminal output from the initial failing Red runs was not captured in Git, so the exact historical failure output cannot be independently reproduced from the repository alone. The current test suite is green after implementation and refactoring.
 
 ## Coverage
 
@@ -55,7 +70,7 @@ Measured coverage: **NOT AVAILABLE**. No coverage command or coverage threshold 
 - Persistence across a real backend restart against Supabase was not executed.
 - Browser-level Playwright/Cypress tests are not configured.
 - Production deployment was not performed.
-- Screenshots of the real application are not currently committed.
+- Screenshots of the real application are committed under [`Screenshots/`](./Screenshots) and embedded in the root README.
 - The live Supabase project currently contains 15 vehicles. The second seed was idempotent. The database currently has two zero-stock vehicles because one existing record was already at zero; the seed intentionally did not overwrite it.
 - Browser-level cart → checkout → confirmation → order-history testing is NOT VERIFIED because no browser automation runtime is configured.
 
