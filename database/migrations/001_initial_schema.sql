@@ -10,6 +10,10 @@ create table if not exists public.users (
 );
 
 create index if not exists users_email_idx on public.users (lower(email));
+create unique index if not exists users_email_ci_idx on public.users (lower(email));
+
+-- The Express backend uses the server-side secret key. No public Supabase policies are created.
+alter table public.users enable row level security;
 
 create table if not exists public.vehicles (
   id uuid primary key default gen_random_uuid(),
@@ -25,3 +29,6 @@ create table if not exists public.vehicles (
 create index if not exists vehicles_make_idx on public.vehicles (lower(make));
 create index if not exists vehicles_model_idx on public.vehicles (lower(model));
 create index if not exists vehicles_category_idx on public.vehicles (lower(category));
+
+-- Vehicle access will also remain backend-only until explicit policies are designed.
+alter table public.vehicles enable row level security;
