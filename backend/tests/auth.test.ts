@@ -1,9 +1,9 @@
 import request from 'supertest';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp } from '../src/app.js';
 import { hashPassword } from '../src/auth/password.js';
 import { signToken } from '../src/auth/token.js';
-import type { UserRecord } from '../src/auth/types.js';
+import type { UserRecord, UserRepository } from '../src/auth/types.js';
 import { InMemoryUserRepository } from './support/in-memory-user-repository.js';
 
 const repository = new InMemoryUserRepository();
@@ -16,8 +16,8 @@ beforeEach(() => {
 describe('POST /api/auth/register', () => {
   it('registers a user with a hashed password and never returns the hash', async () => {
     const response = await request(app).post('/api/auth/register').send({
-      email: 'Driver@example.com',
-      password: 'correct horse battery staple',
+      fullName: 'Test Driver', phone: '+1234567890', email: 'Driver@example.com',
+      password: 'correct horse battery staple', confirmPassword: 'correct horse battery staple',
       role: 'admin',
     });
 
@@ -30,15 +30,33 @@ describe('POST /api/auth/register', () => {
     expect(stored?.passwordHash).not.toBe('correct horse battery staple');
   });
 
+  it('stores profile fields while keeping the password private', async () => {
+    const response = await request(app).post('/api/auth/register').send({
+      fullName: 'A Northline Customer', phone: '+91 63665 82056', email: 'profile@example.com',
+      password: 'correct horse battery staple', confirmPassword: 'correct horse battery staple',
+      city: 'Bengaluru', preferredContactMethod: 'phone', role: 'admin',
+    });
+    expect(response.status).toBe(201);
+    expect(response.body.user).toMatchObject({ fullName: 'A Northline Customer', phone: '+91 63665 82056', city: 'Bengaluru', preferredContactMethod: 'phone', role: 'user' });
+    expect(response.body.user.passwordHash).toBeUndefined();
+    expect(repository.findByEmail('profile@example.com')).toMatchObject({ fullName: 'A Northline Customer', city: 'Bengaluru' });
+  });
+
+  it('rejects mismatched passwords and malformed phone numbers', async () => {
+    const response = await request(app).post('/api/auth/register').send({ fullName: 'Invalid Customer', phone: 'not-a-phone', email: 'invalid@example.com', password: 'correct horse battery staple', confirmPassword: 'different password' });
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
   it('rejects duplicate email addresses', async () => {
     await request(app).post('/api/auth/register').send({
-      email: 'duplicate@example.com',
-      password: 'correct horse battery staple',
+      fullName: 'Duplicate User', phone: '+1234567890', email: 'duplicate@example.com',
+      password: 'correct horse battery staple', confirmPassword: 'correct horse battery staple',
     });
 
     const response = await request(app).post('/api/auth/register').send({
-      email: 'DUPLICATE@example.com',
-      password: 'another secure password',
+      fullName: 'Duplicate User', phone: '+1234567890', email: 'DUPLICATE@example.com',
+      password: 'another secure password', confirmPassword: 'another secure password',
     });
 
     expect(response.status).toBe(409);
@@ -54,13 +72,50 @@ describe('POST /api/auth/register', () => {
     expect(response.status).toBe(400);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
   });
+
+  it('logs safe database error details while keeping the client response generic', async () => {
+    const databaseError = Object.assign(new Error('fetch failed'), {
+      code: 'FETCH_FAILED',
+      cause: Object.assign(new Error('unable to verify the first certificate'), {
+        code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+      }),
+    });
+    const failingRepository: UserRepository = {
+      findByEmail: async () => { throw databaseError; },
+      findById: async () => null,
+      create: async () => { throw databaseError; },
+    };
+    const failingApp = createApp({ userRepository: failingRepository });
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await request(failingApp).post('/api/auth/register').send({
+      fullName: 'Diagnostic User', phone: '+1234567890', email: 'diagnostic@example.invalid',
+      password: 'correct horse battery staple', confirmPassword: 'correct horse battery staple',
+    });
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred' },
+    });
+    expect(log).toHaveBeenCalledWith('Unhandled request error', {
+      name: 'Error',
+      message: 'fetch failed',
+      code: 'FETCH_FAILED',
+      cause: {
+        name: 'Error',
+        message: 'unable to verify the first certificate',
+        code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+      },
+    });
+    log.mockRestore();
+  });
 });
 
 describe('POST /api/auth/login', () => {
   it('logs in with the stored password and returns a JWT', async () => {
     await request(app).post('/api/auth/register').send({
-      email: 'login@example.com',
-      password: 'correct horse battery staple',
+      fullName: 'Login User', phone: '+1234567890', email: 'login@example.com',
+      password: 'correct horse battery staple', confirmPassword: 'correct horse battery staple',
     });
 
     const response = await request(app).post('/api/auth/login').send({
@@ -143,4 +198,3 @@ describe('authentication and role authorization', () => {
     expect(allowed.status).toBe(200);
   });
 });
-

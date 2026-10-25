@@ -18,6 +18,12 @@ export class VehicleService {
     return this.vehicles.list(parsed.data);
   }
 
+  async get(id: string) {
+    const vehicle = await this.vehicles.findById(id);
+    if (!vehicle) throw new VehicleNotFoundError();
+    return vehicle;
+  }
+
   async update(id: string, input: unknown) {
     const parsed = updateVehicleSchema.safeParse(input);
     if (!parsed.success) throw new ValidationError('Vehicle fields are invalid');
@@ -31,4 +37,3 @@ export class VehicleService {
     if (!(await this.vehicles.delete(id))) throw new VehicleNotFoundError();
   }
 }
-

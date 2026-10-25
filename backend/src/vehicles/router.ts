@@ -11,12 +11,12 @@ export function createVehicleRouter(users: UserRepository, vehicles: VehicleRepo
   const controller = createVehicleController(new VehicleService(vehicles));
 
   router.use(authenticate(users));
-  router.post('/', controller.create);
+  router.post('/', requireRole('admin'), controller.create);
   router.get('/search', controller.list);
   router.get('/', controller.list);
-  router.put('/:id', controller.update);
+  router.get('/:id', controller.get);
+  router.put('/:id', requireRole('admin'), controller.update);
   router.delete('/:id', requireRole('admin'), controller.remove);
 
   return router;
 }
-

@@ -7,6 +7,8 @@ describe('AuthScreen', () => {
     const request = vi.fn();
     render(<AuthScreen request={request} onAuthenticated={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: 'register' }));
+    fireEvent.change(screen.getByLabelText('Full name'), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText('Phone'), { target: { value: '+1234567890' } });
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'not-an-email' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'short' } });
     fireEvent.submit(screen.getByRole('button', { name: 'Create account' }).closest('form')!);

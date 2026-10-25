@@ -12,8 +12,10 @@ import type { VehicleRepository } from './vehicles/types.js';
 import { createInventoryRouter } from './inventory/router.js';
 import { SupabaseInventoryRepository } from './inventory/repository.js';
 import type { InventoryRepository } from './inventory/types.js';
+import { createOrderRouter } from './orders/router.js';
+import type { OrderRepository } from './orders/types.js';
 
-export function createApp(options: { userRepository?: UserRepository; vehicleRepository?: VehicleRepository } = {}) {
+export function createApp(options: { userRepository?: UserRepository; vehicleRepository?: VehicleRepository; orderRepository?: OrderRepository } = {}) {
   const app = express();
   const userRepository = options.userRepository ?? new SupabaseUserRepository();
 
@@ -33,6 +35,7 @@ export function createApp(options: { userRepository?: UserRepository; vehicleRep
     ? options.vehicleRepository as VehicleRepository & InventoryRepository
     : new SupabaseInventoryRepository();
   app.use('/api/vehicles', createInventoryRouter(userRepository, inventoryRepository));
+  app.use('/api/orders', createOrderRouter(userRepository, options.orderRepository));
   app.use(errorHandler);
 
   return app;

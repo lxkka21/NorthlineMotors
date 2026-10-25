@@ -28,8 +28,11 @@ export class ForbiddenError extends AppError {
 }
 
 export class ConflictError extends AppError {
-  constructor() {
-    super(409, 'EMAIL_ALREADY_EXISTS', 'An account with this email already exists');
+  constructor(code = 'EMAIL_ALREADY_EXISTS', message = 'An account with this email already exists') {
+    super(409, code, message);
   }
 }
 
+export class UserNotFoundError extends AppError {
+  constructor() { super(404, 'USER_NOT_FOUND', 'User not found'); }
+}

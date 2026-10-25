@@ -3,18 +3,38 @@ export interface VehicleRecord {
   make: string;
   model: string;
   category: string;
+  year?: number;
   price: number;
   quantityInStock: number;
   createdAt: string;
   updatedAt: string;
+  description?: string;
+  imageUrl?: string;
+  imageUrls?: string[];
+  mileage?: number;
+  fuelType?: string;
+  transmission?: string;
+  exteriorColor?: string;
+  engineDetails?: string;
+  seatingCapacity?: number;
 }
 
 export interface CreateVehicleInput {
   make: string;
   model: string;
   category: string;
+  year?: number;
   price: number;
   quantityInStock: number;
+  description?: string;
+  imageUrl?: string;
+  imageUrls?: string[];
+  mileage?: number;
+  fuelType?: string;
+  transmission?: string;
+  exteriorColor?: string;
+  engineDetails?: string;
+  seatingCapacity?: number;
 }
 
 export interface VehicleFilters {
@@ -23,6 +43,7 @@ export interface VehicleFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
+  inStock?: boolean;
 }
 
 export interface VehicleRepository {
@@ -32,4 +53,3 @@ export interface VehicleRepository {
   update(id: string, input: Partial<CreateVehicleInput>): VehicleRecord | null | Promise<VehicleRecord | null>;
   delete(id: string): boolean | Promise<boolean>;
 }
-

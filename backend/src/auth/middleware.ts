@@ -1,13 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 import { AuthenticationError, ForbiddenError } from './errors.js';
 import { verifyToken } from './token.js';
-import type { UserRepository, UserRole } from './types.js';
+import { toPublicUser, type PublicUser, type UserRepository, type UserRole } from './types.js';
 
-declare global {
-  namespace Express {
-    interface Request {
-      authUser?: { id: string; email: string; role: UserRole };
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    authUser?: PublicUser;
   }
 }
 
@@ -23,7 +21,7 @@ export function authenticate(users: UserRepository) {
       const user = await users.findById(claims.sub);
       if (!user) throw new AuthenticationError('INVALID_TOKEN', 'The token is no longer valid');
 
-      request.authUser = { id: user.id, email: user.email, role: user.role };
+      request.authUser = toPublicUser(user);
       next();
     } catch {
       next(new AuthenticationError('INVALID_TOKEN', 'The token is invalid or expired'));
@@ -37,4 +35,3 @@ export function requireRole(role: UserRole) {
     next();
   };
 }
-

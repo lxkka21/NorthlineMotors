@@ -9,10 +9,24 @@ export const credentialsSchema = z.object({
   password: z.string().min(12).max(128),
 });
 
+const phoneSchema = z.string().trim().regex(/^\+?[0-9\s().-]{7,25}$/, 'Phone number is invalid');
+const optionalText = z.string().trim().max(100).optional();
+export const registrationSchema = credentialsSchema.extend({
+  fullName: z.string().trim().min(2).max(120),
+  phone: phoneSchema,
+  confirmPassword: z.string().min(12).max(128),
+  dateOfBirth: z.string().date().optional(),
+  addressLine: optionalText,
+  city: optionalText,
+  state: optionalText,
+  postalCode: z.string().trim().max(20).optional(),
+  preferredContactMethod: z.enum(['email', 'phone']).optional(),
+}).refine((value) => value.password === value.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
+
 export class AuthService {
   constructor(private readonly users: UserRepository) {}
 
-  async register(input: z.infer<typeof credentialsSchema>) {
+  async register(input: z.infer<typeof registrationSchema>) {
     const existing = await this.users.findByEmail(input.email);
     if (existing) throw new ConflictError();
 
@@ -22,6 +36,14 @@ export class AuthService {
         email: input.email,
         passwordHash: await hashPassword(input.password),
         role: 'user',
+        fullName: input.fullName,
+        phone: input.phone,
+        dateOfBirth: input.dateOfBirth,
+        addressLine: input.addressLine,
+        city: input.city,
+        state: input.state,
+        postalCode: input.postalCode,
+        preferredContactMethod: input.preferredContactMethod,
       });
     } catch (error) {
       if (error instanceof Error && error.message === 'EMAIL_ALREADY_EXISTS') throw new ConflictError();

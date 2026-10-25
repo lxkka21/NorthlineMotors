@@ -95,6 +95,21 @@ beforeEach(() => {
   vehicles.clear();
 });
 
+describe('vehicle detail lookup', () => {
+  it('returns one vehicle by its database id', async () => {
+    vehicles.seed(vehicle({ id: 'vehicle-detail-1', model: 'Corolla' }));
+    const response = await request(app).get('/api/vehicles/vehicle-detail-1').set('Authorization', `Bearer ${tokenFor(regularUser)}`);
+    expect(response.status).toBe(200);
+    expect(response.body.vehicle).toMatchObject({ id: 'vehicle-detail-1', model: 'Corolla' });
+  });
+
+  it('returns not found for an unknown vehicle id', async () => {
+    const response = await request(app).get('/api/vehicles/missing').set('Authorization', `Bearer ${tokenFor(regularUser)}`);
+    expect(response.status).toBe(404);
+    expect(response.body.error.code).toBe('VEHICLE_NOT_FOUND');
+  });
+});
+
 describe('vehicle authentication and creation', () => {
   it('requires authentication to create a vehicle', async () => {
     const response = await request(app).post('/api/vehicles').send({
@@ -107,12 +122,23 @@ describe('vehicle authentication and creation', () => {
   it('creates a valid vehicle', async () => {
     const response = await request(app)
       .post('/api/vehicles')
-      .set('Authorization', `Bearer ${tokenFor(regularUser)}`)
+      .set('Authorization', `Bearer ${tokenFor(adminUser)}`)
       .send({ make: 'Toyota', model: 'Camry', category: 'Sedan', price: 28000, quantityInStock: 4 });
 
     expect(response.status).toBe(201);
     expect(response.body.vehicle).toMatchObject({ make: 'Toyota', model: 'Camry', price: 28000, quantityInStock: 4 });
     expect(response.body.vehicle.id).toEqual(expect.any(String));
+  });
+
+  it('denies users from creating vehicles', async () => {
+    for (const account of [regularUser]) {
+      users.seed(account);
+      const response = await request(app)
+        .post('/api/vehicles')
+        .set('Authorization', `Bearer ${tokenFor(account)}`)
+        .send({ make: 'Toyota', model: 'Camry', category: 'Sedan', price: 28000, quantityInStock: 4 });
+      expect(response.status).toBe(403);
+    }
   });
 
   it.each([
@@ -123,7 +149,7 @@ describe('vehicle authentication and creation', () => {
   ])('rejects invalid vehicle input: %j', async (payload) => {
     const response = await request(app)
       .post('/api/vehicles')
-      .set('Authorization', `Bearer ${tokenFor(regularUser)}`)
+      .set('Authorization', `Bearer ${tokenFor(adminUser)}`)
       .send(payload);
 
     expect(response.status).toBe(400);
@@ -188,7 +214,7 @@ describe('vehicle update and deletion', () => {
   it('updates an existing vehicle', async () => {
     const response = await request(app)
       .put('/api/vehicles/vehicle-1')
-      .set('Authorization', `Bearer ${tokenFor(regularUser)}`)
+      .set('Authorization', `Bearer ${tokenFor(adminUser)}`)
       .send({ price: 26500, quantityInStock: 2 });
 
     expect(response.status).toBe(200);
@@ -198,7 +224,7 @@ describe('vehicle update and deletion', () => {
   it('returns 404 for updating a nonexistent vehicle', async () => {
     const response = await request(app)
       .put('/api/vehicles/missing')
-      .set('Authorization', `Bearer ${tokenFor(regularUser)}`)
+      .set('Authorization', `Bearer ${tokenFor(adminUser)}`)
       .send({ price: 26500 });
 
     expect(response.status).toBe(404);

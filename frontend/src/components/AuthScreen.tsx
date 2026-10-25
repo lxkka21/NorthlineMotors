@@ -1,60 +1,74 @@
 import { useState, type FormEvent } from 'react';
-import type { SessionResponse } from '../types/api';
+import type { RegistrationInput, SessionResponse } from '../types/api';
 
 interface AuthScreenProps {
   onAuthenticated: (session: SessionResponse) => void;
-  request: (mode: 'login' | 'register', email: string, password: string) => Promise<SessionResponse>;
+  request: (mode: 'login' | 'register', input: { email: string; password: string } | RegistrationInput) => Promise<SessionResponse>;
 }
+
+const showroomImage = 'https://images.unsplash.com/photo-1660108407012-22a8af96e999?auto=format&fit=crop&w=1600&q=85';
 
 export function AuthScreen({ onAuthenticated, request }: AuthScreenProps) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [addressLine, setAddressLine] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [preferredContactMethod, setPreferredContactMethod] = useState<'email' | 'phone' | ''>('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function submit(event: FormEvent) {
-    event.preventDefault();
-    setError('');
+    event.preventDefault(); setError('');
+    if (mode === 'register' && !fullName.trim()) return setError('Enter your full name.');
     if (!email.includes('@')) return setError('Enter a valid email address.');
+    if (mode === 'register' && !/^\+?[0-9\s().-]{7,25}$/.test(phone.trim())) return setError('Enter a valid phone number.');
     if (password.length < 12) return setError('Password must be at least 12 characters.');
+    if (mode === 'register' && password !== confirmPassword) return setError('Passwords do not match.');
     setLoading(true);
     try {
-      onAuthenticated(await request(mode, email, password));
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Unable to authenticate.');
-    } finally {
-      setLoading(false);
+      const input = mode === 'login' ? { email, password } : { fullName, email, phone, password, confirmPassword, dateOfBirth: dateOfBirth || undefined, addressLine: addressLine || undefined, city: city || undefined, state: state || undefined, postalCode: postalCode || undefined, preferredContactMethod: preferredContactMethod || undefined };
+      onAuthenticated(await request(mode, input));
     }
+    catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to authenticate.'); }
+    finally { setLoading(false); }
   }
 
   return (
-    <main className="min-h-screen bg-[#08111f] px-5 py-10 text-white sm:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-        <section>
-          <p className="mb-5 text-sm font-bold uppercase tracking-[0.28em] text-amber-300">Northline Motors</p>
-          <h1 className="max-w-2xl text-5xl font-black leading-[0.98] tracking-tight sm:text-7xl">A sharper view of every vehicle on your lot.</h1>
-          <p className="mt-7 max-w-xl text-lg leading-8 text-slate-300">An inventory workspace for dealership teams who want clarity from showroom floor to stockroom.</p>
-        </section>
-        <section className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-7 shadow-2xl shadow-black/30 backdrop-blur sm:p-9">
-          <div className="mb-8 flex rounded-xl bg-black/20 p-1">
-            {(['login', 'register'] as const).map((item) => (
-              <button key={item} type="button" onClick={() => { setMode(item); setError(''); }} className={`flex-1 rounded-lg px-4 py-3 text-sm font-bold capitalize transition ${mode === item ? 'bg-amber-300 text-slate-950' : 'text-slate-300 hover:bg-white/10'}`}>
-                {item}
-              </button>
-            ))}
+    <main className="auth-shell">
+      <section className="auth-editorial" style={{ backgroundImage: `linear-gradient(90deg, rgba(8, 12, 16, .95) 0%, rgba(8, 12, 16, .58) 55%, rgba(8, 12, 16, .12) 100%), url(${showroomImage})` }}>
+        <div className="auth-editorial-content">
+          <div className="wordmark"><span className="wordmark-mark">N</span><span>Northline<br /><em>Motors</em></span></div>
+          <div className="auth-copy"><p className="eyebrow">The considered collection</p><h1>Drive the<br /><span>difference.</span></h1><p>One clear view of every vehicle, every conversation, and every decision on the lot.</p></div>
+          <p className="auth-credit">Showroom / Northline collection</p>
+        </div>
+      </section>
+      <section className="auth-panel">
+        <div className="auth-panel-inner">
+          <p className="eyebrow accent">Inventory command center</p>
+          <div className="auth-switcher" aria-label="Authentication mode">
+            {(['login', 'register'] as const).map((item) => <button key={item} type="button" aria-label={item} onClick={() => { setMode(item); setError(''); }} className={mode === item ? 'active' : ''}>{item === 'login' ? 'Sign in' : 'Create account'}</button>)}
           </div>
-          <h2 className="text-2xl font-bold">{mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>
-          <p className="mt-2 text-sm text-slate-400">{mode === 'login' ? 'Sign in to your dealership workspace.' : 'Start managing your inventory in minutes.'}</p>
-          <form className="mt-7 space-y-5" onSubmit={submit}>
-            <label className="block text-sm font-semibold text-slate-200">Email<input aria-label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none ring-amber-300 transition focus:ring-2" /></label>
-            <label className="block text-sm font-semibold text-slate-200">Password<input aria-label="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-white outline-none ring-amber-300 transition focus:ring-2" /></label>
-            {error && <p role="alert" className="rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
-            <button disabled={loading} className="w-full rounded-xl bg-amber-300 px-4 py-3.5 font-black text-slate-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Working…' : mode === 'login' ? 'Enter workspace' : 'Create account'}</button>
+          <h2>{mode === 'login' ? 'Welcome back.' : 'Join the line-up.'}</h2>
+          <p className="auth-subtitle">{mode === 'login' ? 'Access your dealership workspace.' : 'Your new inventory workspace starts here.'}</p>
+          <form className="auth-form detailed-auth-form" onSubmit={submit}>
+            {mode === 'register' && <fieldset><legend>Personal details</legend><label>Full name<input aria-label="Full name" value={fullName} onChange={(event) => setFullName(event.target.value)} autoComplete="name" /></label><label>Date of birth <span>(optional)</span><input aria-label="Date of birth" type="date" value={dateOfBirth} onChange={(event) => setDateOfBirth(event.target.value)} /></label></fieldset>}
+            <fieldset><legend>Contact information</legend><label>Email<input aria-label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@northline.com" autoComplete="email" /></label>{mode === 'register' && <><label>Phone<input aria-label="Phone" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+91 63665 82056" autoComplete="tel" /></label><div className="auth-two-col"><label>Address line <span>(optional)</span><input aria-label="Address line" value={addressLine} onChange={(event) => setAddressLine(event.target.value)} /></label><label>City <span>(optional)</span><input aria-label="City" value={city} onChange={(event) => setCity(event.target.value)} /></label><label>State <span>(optional)</span><input aria-label="State" value={state} onChange={(event) => setState(event.target.value)} /></label><label>Postal code <span>(optional)</span><input aria-label="Postal code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} /></label></div><label>Preferred contact <span>(optional)</span><select aria-label="Preferred contact method" value={preferredContactMethod} onChange={(event) => setPreferredContactMethod(event.target.value as 'email' | 'phone' | '')}><option value="">Choose a preference</option><option value="email">Email</option><option value="phone">Phone</option></select></label></>}</fieldset>
+            <fieldset><legend>Account security</legend><label>Password<div className="password-field"><input aria-label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="12 characters minimum" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} /><button type="button" onClick={() => setShowPassword((current) => !current)}>{showPassword ? 'Hide' : 'Show'}</button></div></label>{mode === 'register' && <><p className="password-requirements">Use at least 12 characters. A long phrase is recommended.</p><label>Confirm password<div className="password-field"><input aria-label="Confirm password" type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" /><button type="button" onClick={() => setShowPassword((current) => !current)}>{showPassword ? 'Hide' : 'Show'}</button></div></label></>}</fieldset>
+            {error && <p role="alert" className="form-error">{error}</p>}
+            <button disabled={loading} className="primary-button">{loading ? 'Working…' : mode === 'login' ? 'Enter workspace' : 'Create account'}</button>
           </form>
-        </section>
-      </div>
+          {mode === 'register' && <p className="auth-note">New accounts begin as Customer access. An administrator can grant Sales access later.</p>}
+          {mode === 'login' && <p className="auth-note"><a className="text-link" href="/admin/login">Administrator portal →</a></p>}
+        </div>
+      </section>
     </main>
   );
 }
-

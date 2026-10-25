@@ -14,6 +14,9 @@ export function createVehicleController(service: VehicleService) {
     list: async (request: Request, response: Response, next: NextFunction) => {
       try { response.json({ vehicles: await service.list(request.query) }); } catch (error) { next(error); }
     },
+    get: async (request: Request, response: Response, next: NextFunction) => {
+      try { response.json({ vehicle: await service.get(routeId(request)) }); } catch (error) { next(error); }
+    },
     update: async (request: Request, response: Response, next: NextFunction) => {
       try { response.json({ vehicle: await service.update(routeId(request), request.body) }); } catch (error) { next(error); }
     },
