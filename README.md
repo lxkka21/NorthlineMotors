@@ -1,6 +1,29 @@
-# Car Dealership Inventory System
+# Northline Motors
 
 Northline Motors is a full-stack car dealership inventory system. It provides a React single-page application backed by an Express REST API, with Supabase PostgreSQL persistence, custom application authentication, JWT authorization, vehicle search, purchasing, and administrator inventory controls.
+
+## Live website
+
+- [Open Northline Motors](https://frontend-three-xi-99caku33l8.vercel.app)
+- [Admin portal](https://frontend-three-xi-99caku33l8.vercel.app/admin/login)
+- [Backend health check](https://backend-pi-five-51.vercel.app/api/health)
+
+The frontend and API are deployed separately on Vercel. Supabase stores the persistent application data. For local development, follow the setup steps below.
+
+## Quick start
+
+```powershell
+npm install
+npm run dev:backend
+```
+
+Open a second terminal and run:
+
+```powershell
+npm run dev:frontend
+```
+
+Then open `http://localhost:5173`. The backend runs at `http://localhost:3000`.
 
 ## Features
 
@@ -136,6 +159,9 @@ SQL migrations are stored in `database/migrations` and must be applied in filena
 3. `003_atomic_inventory_operations.sql`
 4. `004_three_application_roles.sql`
 5. `005_orders_checkout_and_vehicle_year.sql`
+6. `006_profiles_and_vehicle_details.sql`
+7. `007_two_application_roles.sql`
+8. `008_confirmed_purchases.sql`
 
 They create or configure:
 
@@ -197,7 +223,7 @@ Creates a regular user. The request cannot select an administrator role.
 
 ```json
 {
-  "email": "sales@example.com",
+  "email": "user@example.com",
   "password": "a-long-password-of-12-chars"
 }
 ```
@@ -206,7 +232,7 @@ Response: `201 Created`
 
 ```json
 {
-  "user": { "id": "user-id", "email": "sales@example.com", "role": "user" },
+  "user": { "id": "user-id", "email": "user@example.com", "role": "user" },
   "token": "<jwt>"
 }
 ```
@@ -215,7 +241,7 @@ Response: `201 Created`
 
 ```json
 {
-  "email": "sales@example.com",
+  "email": "user@example.com",
   "password": "a-long-password-of-12-chars"
 }
 ```
@@ -331,7 +357,7 @@ npm run build
 The verified results at documentation time were:
 
 - ESLint: passed for root, backend, and frontend.
-- Backend tests: 6 files, 62 tests passed, including detailed registration/profile persistence and vehicle detail lookup by ID.
+- Backend tests: 6 files, 61 tests passed, including detailed registration/profile persistence and vehicle detail lookup by ID.
 - Frontend tests: 8 files, 20 tests passed, including detailed registration validation, admin-login role rejection, app-level detail routing, card navigation, broken-image fallback coverage, and footer contact links.
 - Backend TypeScript build: passed.
 - Frontend TypeScript check and Vite production build: passed.
@@ -342,7 +368,23 @@ The detailed report is in [test-report.md](./test-report.md). Coverage was not m
 
 ## Screenshots
 
-No real application screenshots are currently stored in the repository. Screenshots must be captured manually from the running frontend after configuring a safe test database; none are invented or represented as completed evidence here. Add only redacted screenshots of the actual application under a documented folder such as `docs/screenshots/`.
+Add screenshots of the real application here when ready. Do not add secrets, passwords, tokens, private user data, or database credentials to screenshots.
+
+### Screenshot 1 — Customer login and registration
+
+<!-- Add a real screenshot here, for example: ![Customer login](docs/screenshots/customer-login.png) -->
+
+### Screenshot 2 — Vehicle inventory
+
+<!-- Add a real screenshot here, for example: ![Vehicle inventory](docs/screenshots/inventory.png) -->
+
+### Screenshot 3 — Vehicle detail page
+
+<!-- Add a real screenshot here, for example: ![Vehicle detail](docs/screenshots/vehicle-detail.png) -->
+
+### Screenshot 4 — Admin dashboard
+
+<!-- Add a real screenshot here, for example: ![Admin dashboard](docs/screenshots/admin-dashboard.png) -->
 
 Vehicle card imagery uses fixed Unsplash image URLs selected by vehicle category for presentation only; vehicle identity, price, and stock always come from the API. The login showroom image is also from Unsplash. Capture and store genuine screenshots only after the database has been safely configured and seeded.
 
