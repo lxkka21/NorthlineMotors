@@ -10,7 +10,7 @@ Northline Motors is a full-stack car dealership inventory system. It provides a 
 
 The frontend and API are deployed separately on Vercel. Supabase stores the persistent application data. For local development, follow the setup steps below.
 
-<p align="center"><img src="Screenshots/LoginPage.png" alt="Northline Motors customer login" width="760"></p>
+<p align="center"><img src="Screenshots/LoginPage.png" alt="Northline Motors customer login" width="560"></p>
 
 ## Quick start
 
@@ -42,7 +42,7 @@ Then open `http://localhost:5173`. The backend runs at `http://localhost:3000`.
 - Version-controlled SQL migrations for the database schema and inventory functions.
 - Backend and frontend automated tests, TypeScript checks, ESLint, and production builds.
 
-<p align="center"><img src="Screenshots/CustomerDashboard.png" alt="Northline Motors vehicle inventory" width="760"></p>
+<p align="center"><img src="Screenshots/CustomerDashboard.png" alt="Northline Motors vehicle inventory" width="560"></p>
 
 ## Technology and architecture
 
@@ -130,12 +130,12 @@ The command refuses to run without the confirmation token and refuses to create 
 
 Public registration is the safe way to create a normal User account. Sign out from the account menu before testing another role; each login reads the current role from the backend.
 
-<p align="center"><img src="Screenshots/RegistrationDetails.png" alt="Northline Motors registration form" width="760"></p>
+<p align="center"><img src="Screenshots/RegistrationDetails.png" alt="Northline Motors registration form" width="560"></p>
 
 For evaluator access, use an administrator account provisioned through the protected server-side command above. The administrator email may be shared through a private handoff, but the password must not be committed to this public README. If an admin account is not available, provision one locally with a new private password rather than using a shared credential.
 
-<p align="center"><img src="Screenshots/AdminDashboard.png" alt="Northline Motors administrator dashboard" width="760"></p>
-<p align="center"><img src="Screenshots/EditingCarDetails.png" alt="Northline Motors vehicle editing form" width="760"></p>
+<p align="center"><img src="Screenshots/AdminDashboard.png" alt="Northline Motors administrator dashboard" width="560"></p>
+<p align="center"><img src="Screenshots/EditingCarDetails.png" alt="Northline Motors vehicle editing form" width="560"></p>
 
 ## Running locally
 
@@ -205,8 +205,8 @@ Review the printed target hostname and planned insert count before running the c
 
 The cart is stored under a key scoped to the authenticated user, so browser refreshes and account switches do not mix carts. Quantities are limited by available inventory and repeated lines for the same vehicle are merged. Checkout sends only vehicle IDs and quantities to the backend; Supabase reads trusted prices and stock, creates the order and historical item snapshots in one transaction, and uses an idempotency key to make retries safe. No card details or payment claims are collected; the purchase is confirmed immediately as an inventory purchase.
 
-<p align="center"><img src="Screenshots/Cart.png" alt="Northline Motors shopping cart" width="760"></p>
-<p align="center"><img src="Screenshots/OrderConfirmation.png" alt="Northline Motors order confirmation" width="760"></p>
+<p align="center"><img src="Screenshots/Cart.png" alt="Northline Motors shopping cart" width="560"></p>
+<p align="center"><img src="Screenshots/OrderConfirmation.png" alt="Northline Motors order confirmation" width="560"></p>
 
 Migration `005_orders_checkout_and_vehicle_year.sql` must be applied after migrations 001–004 before using `/api/orders` against Supabase. Until then, the existing vehicle endpoints remain available but live checkout and order history are not configured.
 
@@ -270,7 +270,7 @@ Requires authentication. Returns the authenticated public user without a passwor
 
 All vehicle endpoints require authentication. Vehicle input uses `make`, `model`, `category`, `price`, and `quantityInStock`. Text fields are trimmed; price and quantity must be non-negative.
 
-<p align="center"><img src="Screenshots/IndividualCarDetails.png" alt="Northline Motors vehicle details" width="760"></p>
+<p align="center"><img src="Screenshots/IndividualCarDetails.png" alt="Northline Motors vehicle details" width="560"></p>
 
 #### `POST /api/vehicles`
 
@@ -332,7 +332,7 @@ Returns the authenticated customer's orders. Administrators may view all orders;
 
 Returns one owned order or an administrator-visible order. Cancellation is not exposed because no cancellation/stock-restoration workflow is implemented.
 
-<p align="center"><img src="Screenshots/OrderHistory.png" alt="Northline Motors order history" width="760"></p>
+<p align="center"><img src="Screenshots/OrderHistory.png" alt="Northline Motors order history" width="560"></p>
 
 ### User management
 
