@@ -1,0 +1,21 @@
+node_modules/
+**/node_modules/
+dist/
+build/
+coverage/
+.vite/
+*.log
+
+# Real environment files and local credentials
+.env
+.env.*
+!.env.example
+supa.env
+**/supa.env
+
+# Local tooling and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
