@@ -4,9 +4,11 @@ Northline Motors is a full-stack car dealership inventory system. It provides a 
 
 ## Live website
 
-- [Open Northline Motors](https://frontend-three-xi-99caku33l8.vercel.app)
-- [Admin portal](https://frontend-three-xi-99caku33l8.vercel.app/admin/login)
-- [Backend health check](https://backend-pi-five-51.vercel.app/api/health)
+| Resource | Link |
+|---|---|
+| Website | [Open Northline Motors](https://frontend-three-xi-99caku33l8.vercel.app) |
+| Admin portal | [Open admin login](https://frontend-three-xi-99caku33l8.vercel.app/admin/login) |
+| API health | [Check backend](https://backend-pi-five-51.vercel.app/api/health) |
 
 The frontend and API are deployed separately on Vercel. Supabase stores the persistent application data. For local development, follow the setup steps below.
 
@@ -46,10 +48,12 @@ Then open `http://localhost:5173`. The backend runs at `http://localhost:3000`.
 
 ## Technology and architecture
 
-- Backend: Node.js, TypeScript, Express 5, Zod, Argon2, JSON Web Tokens.
-- Database: Supabase PostgreSQL accessed only by the backend through `@supabase/supabase-js`.
-- Frontend: React, TypeScript, Vite, Tailwind CSS.
-- Testing: Vitest, Supertest, Testing Library, jsdom.
+| Layer | Technology |
+|---|---|
+| Frontend | React, TypeScript, Vite, Tailwind CSS |
+| Backend | Node.js, TypeScript, Express 5, Zod, Argon2, JWT |
+| Database | Supabase PostgreSQL via server-side `@supabase/supabase-js` |
+| Testing | Vitest, Supertest, Testing Library, jsdom |
 
 The backend owns authentication, authorization, validation, business rules, and database access. The frontend communicates with the backend REST API through a centralized typed API client. Supabase credentials are never bundled into the frontend.
 
@@ -65,10 +69,11 @@ Express routes → controllers → services → repositories
 
 ## Prerequisites
 
-- Node.js 20 or newer recommended.
-- npm 10 or newer recommended.
-- A Supabase project for deployment or integration testing.
-- An authorized, isolated database connection for applying migrations.
+| Requirement | Version / access |
+|---|---|
+| Node.js | 20+ recommended |
+| npm | 10+ recommended |
+| Database | Supabase project with authorized migration access |
 
 ## Installation
 
@@ -114,7 +119,12 @@ Never prefix Supabase secret or service-role credentials with `VITE_`. Never put
 
 ### Roles and initial administrator setup
 
-Public registration always creates a `user`; any submitted role is ignored. `user` accounts can view/search inventory and purchase available stock. Only `admin` accounts can create, edit, delete, or restock vehicles, list users, or assign roles. The backend reloads the current user record for every authenticated request, so a role change takes effect even when an older JWT is still presented.
+| Role | Permissions |
+|---|---|
+| `user` | Register, browse/search inventory, purchase available stock, view own orders |
+| `admin` | All user actions plus vehicle CRUD, restocking, user listing, and role assignment |
+
+Public registration always creates `user`; submitted roles are ignored. The backend reloads the current role on protected requests, so revoked permissions do not survive an old JWT.
 
 The initial administrator is provisioned through a local, server-side command rather than public registration. Set the values only in the private backend process environment, apply the role migration first through an authorized database process, and remove the variables immediately afterward:
 
