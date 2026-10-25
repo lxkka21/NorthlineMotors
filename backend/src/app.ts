@@ -19,7 +19,8 @@ export function createApp(options: { userRepository?: UserRepository; vehicleRep
   const app = express();
   const userRepository = options.userRepository ?? new SupabaseUserRepository();
 
-  app.use(helmet());
+  const helmetMiddleware = helmet as unknown as () => import('express').RequestHandler;
+  app.use(helmetMiddleware());
   app.use(cors({ origin: env.FRONTEND_ORIGIN }));
   app.use(express.json());
 
