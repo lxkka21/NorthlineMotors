@@ -386,23 +386,18 @@ The detailed report is in [test-report.md](./test-report.md). Coverage was not m
 
 <!-- Screenshot placeholders are kept near the relevant README content above. Add real, redacted images only. The old placeholder block below is intentionally hidden.
 
-Add screenshots of the real application here when ready. Do not add secrets, passwords, tokens, private user data, or database credentials to screenshots.
 
 ### Screenshot 1 — Customer login and registration
 
-<!-- Add a real screenshot here, for example: ![Customer login](docs/screenshots/customer-login.png) -->
 
 ### Screenshot 2 — Vehicle inventory
 
-<!-- Add a real screenshot here, for example: ![Vehicle inventory](docs/screenshots/inventory.png) -->
 
 ### Screenshot 3 — Vehicle detail page
 
-<!-- Add a real screenshot here, for example: ![Vehicle detail](docs/screenshots/vehicle-detail.png) -->
 
 ### Screenshot 4 — Admin dashboard
 
-<!-- Add a real screenshot here, for example: ![Admin dashboard](docs/screenshots/admin-dashboard.png) -->
 
 -->
 
