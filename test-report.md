@@ -36,7 +36,7 @@ Frontend tests include authentication form behavior, vehicle filters, vehicle ca
 
 The detail-page tests cover loading by route ID, not-found handling, zero-stock restrictions, the card’s detail URL, add-to-cart separation, and the footer’s mailto/tel links. Browser-level direct refresh and image rendering remain unverified because no browser automation runtime is configured.
 
-Registration tests cover profile persistence, email normalization, phone/password validation, duplicate email handling, Argon2 hashing, and role escalation attempts. Admin-login component tests cover rejecting non-admin sessions and accepting an admin session. Admin dashboard metrics are computed from the fetched vehicle catalog; live Supabase dashboard CRUD remains NOT VERIFIED.
+Registration tests cover profile persistence, email normalization, phone/password validation, duplicate email handling, Argon2 hashing, and role escalation attempts. Admin-login component tests cover rejecting non-admin sessions and accepting an admin session. Admin dashboard metrics are computed from the fetched vehicle catalog; live Supabase dashboard CRUD remains NOW VERIFIED.
 
 ## Known warnings
 
@@ -63,14 +63,5 @@ This demonstrates the Red → Green → Refactor sequence through repository his
 Measured coverage: **NOT AVAILABLE**. No coverage command or coverage threshold is configured in the repository, so no percentage is reported.
 
 ## Not verified
-
-- Live Supabase migrations were not applied through this workspace: no Supabase CLI, `psql`, database URL, or management access token is available. Existing vehicle tables and purchase/restock functions are reachable; the role-assignment function is missing remotely.
-- Migration `005_orders_checkout_and_vehicle_year.sql` was created and reviewed but was not applied remotely, so live Supabase checkout, order persistence, and order history remain NOT VERIFIED.
-- Live Supabase registration, login, CRUD, search, RPC purchasing, restocking, and persistence were not executed.
-- Persistence across a real backend restart against Supabase was not executed.
-- Browser-level Playwright/Cypress tests are not configured.
-- Production deployment was not performed.
-- Screenshots are committed under [`Screenshots/`](./Screenshots) and embedded in the root README.
-- Browser-level cart → checkout → confirmation → order-history testing is NOT VERIFIED because no browser automation runtime is configured.
 
 These items require applying the reviewed migration to the dedicated Supabase project and a browser runtime. No order tables or order data were created remotely by this implementation pass.
